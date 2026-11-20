@@ -15,7 +15,7 @@ These rules apply to every page, component, and feature built in this project.
 
 ## Use the tokens
 - Always use the CSS tokens in {stylesheet path}. Never hardcode colors, fonts, radii, or shadows.
-- Primary buttons use var(--primary-fill). Body text never sits on a gradient.
+- Primary buttons use var(--primary-fill). Gradient themes add a soft page wash; body text sits on the wash or on solid surfaces, never on the saturated gradient itself.
 - Alerts, toasts, and form errors use the success, warning, destructive, and info tokens with their matching foregrounds.
 - Cards use var(--shadow-card). Toasts, dialogs, dropdowns, and popovers use var(--shadow-raised).
 - Text links use var(--link). Buttons and pills use var(--radius-button).

@@ -49,12 +49,13 @@ The sandbox restyles the app by overriding CSS variables, so the key screens mus
 1. Copy every file in `template/` into the project at `src/style-sandbox/` (or the project's equivalent source folder), **unchanged**: `StyleSandbox.tsx`, `color.ts`, `config.ts`, `fonts.ts`, `look.ts`, `styles.ts`, `themes.ts`.
 2. Edit **only** `src/style-sandbox/config.ts`. Replace every value marked `FILL` with what you found in Phase 0 and set up in Phase 1: app name, headline and body copy, token format, token names (set any the app lacks to `null`, including `spacing` if spacing isn't one variable), the decorations selector, and the current look.
 3. Mount `<StyleSandbox />` once in the app's root layout, next to the router outlet, so it stays open while the user navigates. It renders nothing unless the URL has `?style-sandbox` on an allowed host, so visitors to the published site never see it. See `references/stack-notes.md` for each router.
-4. Make sure the project builds. If the project's TypeScript or lint settings reject something in the template, make the smallest possible fix and mention it.
+4. Help the user and future agents find it: add one line to the project's `AGENTS.md` (create it if missing; in Lovable, also suggest adding it to Project Knowledge): "Style Sandbox is installed. Open it on any preview page by adding ?style-sandbox to the URL or pressing Option+Shift+S (Alt+Shift+S on Windows)."
+5. Make sure the project builds. If the project's TypeScript or lint settings reject something in the template, make the smallest possible fix and mention it.
 
 ## Phase 3: Hand off
 
 Reply in 3 to 5 short lines:
-- How to open it: add `?style-sandbox` to the end of any preview URL (for example `/?style-sandbox`). It only opens on preview and local addresses.
+- How to open it, in bold, as the first line: **Add `?style-sandbox` to the end of your preview URL, or press Option+Shift+S (Alt+Shift+S on Windows) while viewing the preview.** It only opens on preview and local addresses. If you know the preview URL, give it as a ready link with `?style-sandbox` already added.
 - What was prepared in Phase 1, in one line.
 - One thing to try first: "Pick a vibe, tap a theme, then click around your app."
 - When they like a look: Copy as prompt and send it, or Copy CSS and paste it for free.
@@ -64,7 +65,7 @@ Reply in 3 to 5 short lines:
 When the user sends a look JSON:
 
 1. Re-check AA with the formula in `references/contrast.md`. If anything fails, fix it the same way the sandbox does and say what changed.
-2. Write the look's values into the global stylesheet's variables, and its fonts into the font links. The JSON lists every color, the mode, the corner and shadow values, fonts, heading tracking, density, and paper grain. If `paperGrain` is true, add the grain overlay from the exported CSS. Do not touch layout, copy, or components.
+2. Write the look's values into the global stylesheet's variables, and its fonts into the font links. The JSON lists every color, the mode, the corner and shadow values, fonts, heading tracking, and density. Do not touch layout, copy, or components.
 3. **Add the supporting colors the AI will need later**, even though the sandbox doesn't show them: success, warning, destructive, and info, each with a matching foreground, plus disabled text. Derive them from the theme and make each pass AA. See `references/contrast.md`.
 4. **Carry AA forward.** Create or update `DESIGN.md` at the project root using `references/design-rules.md`, filled in with the applied look. If the project has `AGENTS.md`, `CLAUDE.md`, or `.cursor/rules`, add one line pointing to `DESIGN.md`. In Lovable, also tell the user: "Paste DESIGN.md into Project Knowledge so every future prompt follows it."
 5. Update `current` in `src/style-sandbox/config.ts` to the applied look, so "Current" stays accurate.

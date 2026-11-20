@@ -35,6 +35,8 @@ STEP 3: PREP TOKENS (keep it small)
 - Only touch what those 3 screens and their shared components use.
 - Add any missing CSS variables to the global stylesheet, set to the CURRENT values, so nothing looks different.
 - Point primary and secondary buttons, links, cards, headings, and body text at those variables.
+- If a background pattern or texture (dot grid, stripes, CSS gradient) uses a fixed color, rewrite only its color with the variables (for example hsl(var(--foreground) / 0.12)), keeping its size and spacing.
+- If cards have no shadow class and no bg-card (for example bg-white rounded-xl border), add bg-card so the Depth slider reaches them. Tailwind rounded-* and shadow-* classes don't need rewriting; the panel handles them.
 - Add data-decor to the decorative elements.
 - Do not change layout, spacing, copy, or structure.
 
@@ -43,15 +45,36 @@ STEP 4: INSTALL
 - Edit ONLY config.ts. Replace every value marked FILL with what you found: app name, headline and body copy, token format, token names (use null for any the app doesn't have, including spacing if spacing isn't one variable), the decorations selector, and the current look.
 - In config.ts, add this builder's PREVIEW hostname (or a unique part of it) to hosts. Never add the published app's domain, so visitors can't open the panel.
 - Mount <StyleSandbox /> once in the app's root layout (the component that wraps every page), next to the page content, so it stays open while I click between pages.
+- Add this line to AGENTS.md at the project root (create it if missing): "Style Sandbox is installed. Open it on any preview page by adding ?style-sandbox to the URL or pressing Option+Shift+S (Alt+Shift+S on Windows)."
 - Make sure the app builds. If this project is JavaScript only and rejects .ts/.tsx files, make the smallest change needed to build (for example rename the files and remove the type annotations) and tell me what you changed. Do not add npm packages; the files only need React.
 
 STEP 5: TELL ME (3 to 5 short lines)
-- How to open it: add ?style-sandbox to the end of the preview URL.
+- How to open it, first and in bold: add ?style-sandbox to the end of the preview URL, or press Option+Shift+S (Alt+Shift+S on Windows).
 - What you prepped in Step 3, in one line.
 - Which preview host you added, so I can fix it if the panel doesn't open.
 - When I like a look: Copy CSS and paste it in for free, or Copy as prompt and send it back to you.
 
 Rules: never edit the template files except config.ts (or the smallest fix needed to build), never let the panel open on the published site, never change how the app looks during this install.
+```
+
+## Refreshing an existing install
+
+Already installed Style Sandbox and want the latest version? Paste this instead. It replaces the panel's code but keeps your app's settings in config.ts.
+
+```text
+Update Style Sandbox to the latest version. Do not ask me questions, and do not change how the app looks.
+
+1. Download these 6 files exactly as written and replace the files with the same names in the existing style-sandbox folder. Do not retype, rewrite, shorten, or "improve" them:
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/StyleSandbox.tsx
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/color.ts
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/fonts.ts
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/look.ts
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/styles.ts
+https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/themes.ts
+If you cannot open these links, STOP and reply only: "I can't download the Style Sandbox files in this builder."
+2. Do NOT replace config.ts. Open the latest version at https://raw.githubusercontent.com/leahsass/style-sandbox/main/style-sandbox/template/config.ts and add any settings it has that the existing config.ts is missing, using the default values. Keep every existing value exactly as it is.
+3. Make sure the app builds. If something in the new files doesn't build in this project, make the smallest fix and tell me.
+4. Reply in 2 lines: which files you replaced, and which settings you added to config.ts.
 ```
 
 ## Applying a look later

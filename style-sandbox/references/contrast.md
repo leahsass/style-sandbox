@@ -19,6 +19,7 @@ The template checks these automatically (see `template/color.ts`). Apply mode re
 |---|---|
 | Text on background | 4.5 |
 | Text on primary buttons (every gradient stop) | 4.5 |
+| Text, muted text, and links on a gradient theme's page wash | 4.5 |
 | Muted text on background | 4.5 |
 | Links on background | 4.5 |
 | Text on secondary | 4.5 |

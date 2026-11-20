@@ -21,12 +21,13 @@ So I made the thing I wanted: one build, then unlimited free exploration on my a
 - **Gradient themes, where they fit the vibe.** Nine themes are built around one signature gradient, used on your main buttons and as a soft wash behind the page, with solid supporting colors. Everything else is solid. No toggles to fiddle with.
 - **Light or dark, for any theme.** Flip modes and Style Sandbox builds the matching version of the theme, still passing AA.
 - **Fonts that match your theme.** Pick a Warm & Earthy theme and you get warm pairings like Crafted and Homey; pick a Techy one and you get Technical and Precise. Three pairings per vibe, each shown in your real headline. Or mix your own heading, body, and emphasis fonts.
-- **Sliders and switches for the rest.** Corner radius, depth, shadow softness, heading tracking, Compact / Cozy / Roomy density, paper grain, and Hide decorations for mascots and illustrations.
+- **Sliders and switches for the rest.** Corner radius, depth, shadow softness, heading tracking, Compact / Cozy / Roomy density, and Hide decorations for mascots and illustrations.
 - **AA accessibility built in.** Every look is checked live, with a one-tap fix. A look can't be copied until it meets WCAG AA. Applying it adds AA-safe colors for alerts and errors and writes a `DESIGN.md`, so everything your AI builds afterward stays accessible.
 - **Saved looks.** Save a few and tap between them to compare on the same page.
 - **Bring your own theme.** Paste CSS from tweakcn, shadcn themes, or any theme generator.
 - **Share a look.** Send a link that opens the panel with your look already applied.
 - **Copy as prompt, or copy the CSS for free.** The CSS is exactly what you previewed.
+- **Works with hard-coded styles.** Corners and Depth also reach Tailwind `rounded-*` and `shadow-*` classes, so apps that never used design tokens still respond.
 - **Safe by default.** The panel only opens on preview and local addresses, never on your published site.
 
 ## Low-credit install
@@ -72,12 +73,16 @@ On a Builder plan or higher, go to **Build tools**, then **Skills**, choose **Ad
 ### No skills on your plan?
 Use the [paste-in prompt](PROMPT.md) instead. It does the same install in one message and works in builders without skills, like Base44 Starter. Tested in Base44.
 
+## Opening the panel
+
+Add `?style-sandbox` to the end of your preview URL, or press **Option+Shift+S** (Alt+Shift+S on Windows) while viewing your preview. It only opens on preview and local addresses, never on your published site. The install also adds this reminder to your project's `AGENTS.md`, so your AI builder can remind you later.
+
 ## How it works
 
 1. **Preflight.** Reads your project and changes nothing.
 2. **Token prep.** Makes sure your key screens read their colors, fonts, corners, and shadows from CSS variables. Your app looks exactly the same afterward.
 3. **Install.** Copies in the panel, fills in one config file with your current look, and mounts it in your app.
-4. **Explore.** Add `?style-sandbox` to your preview URL. Everything from here runs in your browser, so it costs nothing.
+4. **Explore.** Add `?style-sandbox` to your preview URL or press Option+Shift+S. Everything from here runs in your browser, so it costs nothing.
 5. **Apply.** When a look meets AA, copy it as a prompt and send it, or copy the CSS and paste it yourself.
 
 Run it again later and it keeps the existing install instead of starting over.
@@ -97,6 +102,8 @@ Style Sandbox is free and always will be. If it saved you time or credits, you c
 ## Credits
 
 Created by **Leah Sass** of 1x Designs.
+
+Inspired by Lovable's former built-in `/redesign` skill and by the in-app design studio panel shown in Lovable's webinar "Good Design Takes More Than Vibes" with Jon Higginbotham and Paul Nylund. Style Sandbox turns that hand-prompted idea into a reusable skill anyone can install.
 
 ## License
 

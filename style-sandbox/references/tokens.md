@@ -31,8 +31,10 @@ Color variables use the project's existing format (set `tokenFormat` in `config.
 
 1. Add any missing variable to the global stylesheet's `:root`, **set to the current value**, so the app looks exactly the same.
 2. In the components the key screens use, replace hardcoded colors, fonts, radii, and shadows with the variables. In Tailwind, use arbitrary values such as `rounded-[var(--radius-button)]`, `shadow-[var(--shadow-card)]`, or `bg-[image:var(--primary-fill)]`, or add them to the Tailwind theme.
-3. Add `data-decor` to decorative elements (illustrations, mascots, background shapes) so "Hide decorations" works.
-4. Leave layout, spacing, copy, and structure alone.
+3. **Background patterns and textures** (dot grids, stripes, gradients drawn in CSS) must use the color variables too, or they'll stay the old color when the theme changes. Rewrite their colors with the variables, keeping size and spacing: for example `radial-gradient(hsl(var(--foreground) / 0.12) 1px, transparent 1px)` for shadcn triplets, or `color-mix(in srgb, var(--foreground) 12%, transparent)` for hex.
+4. Tailwind `rounded-*` and `shadow-*` classes (and `bg-card` surfaces) are handled by the panel itself (see `tailwindClasses` in `config.ts`), so you don't need to rewrite them. If cards have no shadow class and no `bg-card` (for example `bg-white rounded-xl border`), add `bg-card` or `shadow-sm` to them so Depth reaches them. Inline `border-radius` styles on key components should still be replaced with `var(--radius)` or `var(--radius-button)`.
+5. Add `data-decor` to decorative elements (illustrations, mascots, background shapes) so "Hide decorations" works.
+6. Leave layout, spacing, copy, and structure alone.
 
 ## Checking your work
 

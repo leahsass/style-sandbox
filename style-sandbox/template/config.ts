@@ -64,6 +64,9 @@ export const SANDBOX_CONFIG = {
     spacing: null,
   } as Record<string, string | null>,
 
+  /** Ties Tailwind rounded-* and shadow-* classes to the Corners and Depth sliders. Set false if the project doesn't use Tailwind. */
+  tailwindClasses: true,
+
   /** FILL: CSS selector for decorative art (illustrations, mascots, background shapes) that "Hide decorations" hides. Use "" if none. */
   decorations: "[data-decor]",
 

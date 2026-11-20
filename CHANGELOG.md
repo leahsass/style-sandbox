@@ -4,14 +4,16 @@
 
 First release.
 
-- Floating style panel over the live app, opened with `?style-sandbox` on preview and local hosts only
+- Floating style panel over the live app, opened with `?style-sandbox` or Option+Shift+S on preview and local hosts only; minimizes to a pill on the screen edge
 - Ready-made panel code ships with the skill, so installs are quick and consistent
 - 40 color themes in 8 vibes, with Mix to shuffle one theme from each of five vibes
 - 9 gradient themes (up to 2 per vibe, none in Romantic or Classic) built around one signature gradient on primary buttons plus a soft page wash; all other themes are solid
 - Light or dark mode for any theme, generated to pass AA
 - Font pairings follow the selected theme’s vibe: three dedicated pairings per vibe with personality labels, shown in the app’s real headline, plus mix-your-own heading, body, and emphasis fonts
 - Sliders for corner radius, depth, shadow softness, and heading tracking; Compact, Cozy, Roomy density when spacing is tokenized
-- Hide decorations switches
+- Corner slider also controls hard-coded Tailwind `rounded-*` classes, keeping their relative sizes
+- Depth and Softness also control Tailwind `shadow-*` classes and `bg-card` surfaces
+- Hide decorations switch
 - Components sheet: buttons and links with hover states, pills, navigation, cards at every depth, text field, avatar, divider
 - Live WCAG 2.2 AA check with one-tap fix; copying is blocked until AA passes
 - Saved looks you tap to compare, share links, Import CSS from theme generators
