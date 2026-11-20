@@ -18,3 +18,4 @@ First release.
 - Copy as prompt, or copy CSS identical to the preview
 - Apply mode adds AA-safe feedback colors and writes `DESIGN.md` so future work stays accessible
 - Works in Lovable, Claude Code, Cursor, and Codex
+- Added PROMPT.md: paste-in install for builders without skills, tested in Base44.
