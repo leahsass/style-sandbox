@@ -7,7 +7,7 @@ First release.
 - Floating style panel over the live app, opened with `?style-sandbox` on preview and local hosts only
 - Ready-made panel code ships with the skill, so installs are quick and consistent
 - 40 color themes in 8 vibes, with Mix to shuffle one theme from each of five vibes
-- Gradient-ready themes with a Solid or Gradient choice for the key color
+- 9 gradient themes (up to 2 per vibe, none in Romantic or Classic) built around one signature gradient on primary buttons plus a soft page wash; all other themes are solid
 - Light or dark mode for any theme, generated to pass AA
 - Font pairings follow the selected theme’s vibe: three dedicated pairings per vibe with personality labels, shown in the app’s real headline, plus mix-your-own heading, body, and emphasis fonts
 - Sliders for corner radius, depth, shadow softness, and heading tracking; Compact, Cozy, Roomy density when spacing is tokenized
