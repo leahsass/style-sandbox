@@ -9,7 +9,7 @@ First release.
 - 40 color themes in 8 vibes, with Mix to shuffle one theme from each of five vibes
 - Gradient-ready themes with a Solid or Gradient choice for the key color
 - Light or dark mode for any theme, generated to pass AA
-- Font pairings with personality labels shown in the app's real headline, plus mix-your-own heading, body, and emphasis fonts
+- Font pairings follow the selected theme’s vibe: three dedicated pairings per vibe with personality labels, shown in the app’s real headline, plus mix-your-own heading, body, and emphasis fonts
 - Sliders for corner radius, depth, shadow softness, and heading tracking; Compact, Cozy, Roomy density when spacing is tokenized
 - Paper grain and Hide decorations switches
 - Components sheet: buttons and links with hover states, pills, navigation, cards at every depth, text field, avatar, divider
