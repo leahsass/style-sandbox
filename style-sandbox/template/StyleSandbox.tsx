@@ -249,7 +249,7 @@ export function StyleSandbox() {
     return (
       <div className="ss-root">
         <style>{SANDBOX_CSS}</style>
-        <button className="ss-pill" style={left ? { left: 16, right: "auto" } : undefined} onClick={() => setCollapsed(false)} aria-label="Open Style Sandbox">✦ Style Sandbox</button>
+        <button className="ss-pill" style={left ? { left: 12, right: "auto" } : undefined} onClick={() => setCollapsed(false)} aria-label="Open Style Sandbox">✦ Style Sandbox</button>
       </div>
     );
   }

@@ -6,7 +6,9 @@ export const SANDBOX_CSS = `
 .ss-root { font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: #1C1917; letter-spacing: normal; text-transform: none; }
 .ss-root h1, .ss-root h2, .ss-root h3, .ss-root p, .ss-root label, .ss-root button, .ss-root input, .ss-root textarea, .ss-root pre { font-family: inherit; letter-spacing: normal; text-transform: none; color: inherit; margin: 0; }
 .ss-panel { position: fixed; top: 16px; right: 16px; bottom: 16px; width: 360px; max-width: calc(100vw - 32px); display: flex; flex-direction: column; background: #FAFAF8; border: 1px solid #E2DFD8; border-radius: 16px; box-shadow: 0 18px 50px rgba(0,0,0,.22); z-index: 2147483000; overflow: hidden; }
-.ss-pill { position: fixed; right: 16px; bottom: 16px; z-index: 2147483000; appearance: none; border: 0; background: #1C1917; color: #fff; border-radius: 999px; padding: 10px 16px; font: 600 13px/1 ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.25); cursor: pointer; }
+/* Minimized pill sits mid-height on the edge, away from bottom nav bars and top headers. */
+.ss-root .ss-pill { position: fixed; right: 12px; top: 50%; bottom: auto; transform: translateY(-50%); z-index: 2147483000; appearance: none; border: 0; background: #1C1917; color: #FFFFFF; border-radius: 999px; padding: 10px 14px; font: 600 13px/1 ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.25); cursor: pointer; }
+.ss-root .ss-pill:hover { background: #3A3631; }
 .ss-head { display: flex; align-items: flex-start; gap: 8px; padding: 14px 16px 12px; border-bottom: 1px solid #E2DFD8; }
 .ss-title { font-size: 15px; font-weight: 700; }
 .ss-sub { color: #6B655C; font-size: 12px; margin-top: 1px; }
