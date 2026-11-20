@@ -18,7 +18,7 @@ So I made the thing I wanted: one build, then unlimited free exploration on my a
 
 - **A panel over your real app.** Click between pages while you tweak. Minimize it to a small pill, or move it to the other side so it never hides what you're judging. Close it and your app goes back to normal.
 - **Vibes, not guesswork.** Pick a vibe like Warm & Earthy or Techy & Modern, or tap Mix to shuffle one theme from each of five vibes. 40 themes ship with the skill, but you only see a handful at a time, so no two apps start from the same five.
-- **Gradients where they make sense.** Gradient-ready themes let you choose Solid or Gradient for the key color.
+- **Gradient themes, where they fit the vibe.** Nine themes are built around one signature gradient, used on your main buttons and as a soft wash behind the page, with solid supporting colors. Everything else is solid. No toggles to fiddle with.
 - **Light or dark, for any theme.** Flip modes and Style Sandbox builds the matching version of the theme, still passing AA.
 - **Fonts that match your theme.** Pick a Warm & Earthy theme and you get warm pairings like Crafted and Homey; pick a Techy one and you get Technical and Precise. Three pairings per vibe, each shown in your real headline. Or mix your own heading, body, and emphasis fonts.
 - **Sliders and switches for the rest.** Corner radius, depth, shadow softness, heading tracking, Compact / Cozy / Roomy density, paper grain, and Hide decorations for mascots and illustrations.
