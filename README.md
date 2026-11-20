@@ -20,7 +20,7 @@ So I made the thing I wanted: one build, then unlimited free exploration on my a
 - **Vibes, not guesswork.** Pick a vibe like Warm & Earthy or Techy & Modern, or tap Mix to shuffle one theme from each of five vibes. 40 themes ship with the skill, but you only see a handful at a time, so no two apps start from the same five.
 - **Gradients where they make sense.** Gradient-ready themes let you choose Solid or Gradient for the key color.
 - **Light or dark, for any theme.** Flip modes and Style Sandbox builds the matching version of the theme, still passing AA.
-- **Font pairings with personality.** Editorial, Technical, Expressive, and more, each shown in your real headline. Or mix your own heading, body, and emphasis fonts.
+- **Fonts that match your theme.** Pick a Warm & Earthy theme and you get warm pairings like Crafted and Homey; pick a Techy one and you get Technical and Precise. Three pairings per vibe, each shown in your real headline. Or mix your own heading, body, and emphasis fonts.
 - **Sliders and switches for the rest.** Corner radius, depth, shadow softness, heading tracking, Compact / Cozy / Roomy density, paper grain, and Hide decorations for mascots and illustrations.
 - **AA accessibility built in.** Every look is checked live, with a one-tap fix. A look can't be copied until it meets WCAG AA. Applying it adds AA-safe colors for alerts and errors and writes a `DESIGN.md`, so everything your AI builds afterward stays accessible.
 - **Saved looks.** Save a few and tap between them to compare on the same page.
