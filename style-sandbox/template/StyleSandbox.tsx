@@ -4,19 +4,19 @@
 // Do not edit per project. Project settings live in config.ts.
 //
 // Mount <StyleSandbox /> once in the app's root layout. It renders nothing unless the URL has
-// ?style-sandbox and the host is a preview or local host (see config.hosts).
+// ?style-sandbox (or the user presses Option+Shift+S / Alt+Shift+S) on a preview or local host (see config.hosts).
 
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { checks, derive, fix, type KeyColors } from "./color";
 import { SANDBOX_CONFIG as CFG } from "./config";
-import { ACCENT_FONTS, BODY_FONTS, FONT_PAIRS, HEADING_FONTS, byVibe, fontUrls, loadFonts } from "./fonts";
+import { ACCENT_FONTS, BODY_FONTS, FONT_PAIRS, HEADING_FONTS, byVibe, fontUrls, forVibe, loadFonts, pairsSampler } from "./fonts";
 import {
   DEPTH_LABELS, RADIUS_FULL, currentLook, decodeLook, effectiveColors, encodeLook, exportCss, fontStack, lookName,
   lookPrompt, parseImport, previewCss, primaryFill, radii, radiusLabel, shadows, suggestGradientEnd, themeName,
   type Density, type Look,
 } from "./look";
 import { SANDBOX_CSS } from "./styles";
-import { VIBES, shuffleMix, themesForVibe, type Theme } from "./themes";
+import { THEMES, VIBES, shuffleMix, themesForVibe, type Theme } from "./themes";
 
 const PARAM = "style-sandbox";
 const OPEN_KEY = "style-sandbox-open";
@@ -117,9 +117,8 @@ export function StyleSandbox() {
   const flash = (m: string) => { setToast(m); window.setTimeout(() => setToast(""), 2400); };
   const up = (p: Partial<Look>) => { setFixNote([]); setLook((l) => ({ ...l, ...p })); };
 
-  // Open only on allowed hosts with ?style-sandbox; stay open for the tab while navigating.
-  useEffect(() => {
-    if (!wantsOpen()) return;
+  // Open only on allowed hosts with ?style-sandbox or the keyboard shortcut; stay open for the tab while navigating.
+  const start = () => {
     safe(() => sessionStorage.setItem(OPEN_KEY, "1"), undefined);
     const m = window.location.hash.match(/look=([^&]+)/);
     const shared = m?.[1] ? decodeLook(m[1]) : null;
@@ -127,7 +126,17 @@ export function StyleSandbox() {
     if (shared) { setLook(shared); flash("Shared look loaded"); } else if (stored) setLook(stored);
     setSaved(safe(() => JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]") as Look[], []));
     setOpen(true);
-  }, []);
+    setCollapsed(false);
+  };
+  useEffect(() => {
+    if (wantsOpen()) start();
+    if (!hostAllowed()) return;
+    const onShortcut = (e: KeyboardEvent) => {
+      if (e.altKey && e.shiftKey && e.code === "KeyS") { e.preventDefault(); start(); }
+    };
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const css = previewCss(look, hide);
   useEffect(() => {
@@ -148,9 +157,19 @@ export function StyleSandbox() {
   }, [open]);
 
   const themes = vibe === "mix" ? mix : themesForVibe(vibe);
-  const pairs = useMemo(() => byVibe(FONT_PAIRS, vibe).slice(0, 5), [vibe]);
-  const headings = useMemo(() => byVibe(HEADING_FONTS, vibe).slice(0, 8), [vibe]);
-  const bodies = useMemo(() => byVibe(BODY_FONTS, vibe).slice(0, 6), [vibe]);
+  // Fonts follow the selected theme's vibe, so a Warm & Earthy theme gets warm fonts. With no vibe yet
+  // (Current, Custom, Imported), show one pairing from each of several vibes.
+  const themeVibe = (THEMES.find((t) => t.id === look.themeId) ?? CFG.extraThemes.find((t) => t.id === look.themeId))?.vibe;
+  const fontVibe = themeVibe && themeVibe !== "custom" ? themeVibe : vibe !== "mix" ? vibe : null;
+  const fontVibeLabel = VIBES.find((v) => v.id === fontVibe)?.label;
+  const [morePairs, setMorePairs] = useState(false);
+  const sampler = useMemo(() => pairsSampler(), []);
+  const pairs = useMemo(() => {
+    if (morePairs) return fontVibe ? byVibe(FONT_PAIRS, fontVibe) : FONT_PAIRS;
+    return fontVibe ? forVibe(FONT_PAIRS, fontVibe) : sampler;
+  }, [fontVibe, morePairs, sampler]);
+  const headings = useMemo(() => (fontVibe ? byVibe(HEADING_FONTS, fontVibe) : HEADING_FONTS).slice(0, morePairs ? 99 : 8), [fontVibe, morePairs]);
+  const bodies = useMemo(() => (fontVibe ? byVibe(BODY_FONTS, fontVibe) : BODY_FONTS).slice(0, morePairs ? 99 : 6), [fontVibe, morePairs]);
   const hasAccent = !!CFG.tokens.fontAccent;
 
   useEffect(() => {
@@ -243,6 +262,7 @@ export function StyleSandbox() {
           <div style={{ flex: 1 }}>
             <p className="ss-title">Style Sandbox</p>
             <p className="ss-sub">Live tweaks, zero credits. Click around your app.</p>
+            <p className="ss-sub">Reopen anytime: add ?style-sandbox to the URL or press ⌥⇧S.</p>
           </div>
           <button className="ss-icon" onClick={() => setLeft(!left)} aria-label={left ? "Move panel right" : "Move panel left"} title="Move panel to the other side">⇆</button>
           <button className="ss-icon" onClick={() => setCollapsed(true)} aria-label="Minimize" title="Minimize">−</button>
@@ -281,7 +301,7 @@ export function StyleSandbox() {
             )}
           </Section>
 
-          <Section title="Typography">
+          <Section title="Typography" value={fontVibeLabel ? `For ${fontVibeLabel}` : undefined}>
             {[{ label: "Current", heading: CFG.current.fonts.heading, body: CFG.current.fonts.body }, ...pairs].map((p) => {
               const on = look.fonts.heading === p.heading && look.fonts.body === p.body;
               return (
@@ -291,7 +311,10 @@ export function StyleSandbox() {
                 </button>
               );
             })}
-            <div><button className="ss-link" onClick={() => setOwnFonts(!ownFonts)} aria-expanded={ownFonts}>{ownFonts ? "Hide font picker" : "Mix your own fonts"}</button></div>
+            <div style={{ display: "flex", gap: 14 }}>
+              <button className="ss-link" onClick={() => setMorePairs(!morePairs)} aria-expanded={morePairs}>{morePairs ? "Fewer pairings" : fontVibe ? "Pairings from other vibes" : "More pairings"}</button>
+              <button className="ss-link" onClick={() => setOwnFonts(!ownFonts)} aria-expanded={ownFonts}>{ownFonts ? "Hide font picker" : "Mix your own fonts"}</button>
+            </div>
             {ownFonts && (<>
               <p className="ss-sublabel">Heading</p>
               <div className="ss-chips">
