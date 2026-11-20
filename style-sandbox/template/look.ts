@@ -23,7 +23,6 @@ export type Look = {
   depth: number; // 0 to 4
   softness: number; // 0 (hard edge) to 100 (diffused)
   density: Density;
-  grain: boolean;
 };
 
 const findTheme = (id: string) => THEMES.find((t) => t.id === id) ?? SANDBOX_CONFIG.extraThemes.find((t) => t.id === id);
@@ -41,7 +40,6 @@ export const currentLook = (): Look => ({
   depth: SANDBOX_CONFIG.current.depth,
   softness: SANDBOX_CONFIG.current.softness,
   density: "cozy",
-  grain: false,
 });
 
 /** The colors actually shown: the theme's colors, converted to light or dark if asked. */
@@ -138,9 +136,42 @@ export function tokenValues(l: Look, cfg = SANDBOX_CONFIG): [string, string][] {
   return out;
 }
 
-const GRAIN_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.55'/></svg>";
-const grainCss = (on: boolean) =>
-  on ? `body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2147482000; background-image: url("${GRAIN_SVG}"); opacity: .07; mix-blend-mode: multiply; }` : "";
+/**
+ * Many apps hard-code corners with Tailwind classes (rounded-xl, rounded-2xl...) that ignore --radius.
+ * These rules tie every radius class except rounded-full to the look's corner radius, keeping the
+ * app's relative sizes (an xl card stays rounder than an md input). Buttons follow the button radius.
+ * Turn off with `tailwindRadius: false` in config.ts for projects without Tailwind.
+ */
+const RADIUS_SCALE: [string, number][] = [["rounded-sm", 0.5], ["rounded", 0.75], ["rounded-md", 0.75], ["rounded-lg", 1], ["rounded-xl", 1.5], ["rounded-2xl", 2], ["rounded-3xl", 3]];
+const tailwindOn = (cfg: typeof SANDBOX_CONFIG) => {
+  const c = cfg as { tailwindClasses?: boolean; tailwindRadius?: boolean };
+  return c.tailwindClasses !== false && c.tailwindRadius !== false;
+};
+const radiusRules = (important: boolean, cfg = SANDBOX_CONFIG) => {
+  const r = cfg.tokens["radius"], rb = cfg.tokens["radiusButton"];
+  if (!r || !tailwindOn(cfg)) return "";
+  const imp = important ? " !important" : "";
+  const cards = RADIUS_SCALE.map(([c, m]) => `.${c} { border-radius: min(calc(var(${r}) * ${m}), 40px)${imp}; }`);
+  // Elements token prep marked as buttons win even over rounded-full, which shadcn button variants often add.
+  const marked = [`[class~="rounded-button"]`, `[class*="rounded-[var(${rb})]"]`].flatMap((m) => [m, `${m}.rounded-full`]).join(", ");
+  const buttons = rb ? [`${RADIUS_SCALE.map(([c]) => `button.${c}, a.${c}[role="button"]`).join(", ")} { border-radius: var(${rb})${imp}; }`, `${marked} { border-radius: var(${rb}) !important; }`] : [];
+  return [...cards, ...buttons].join("\n");
+};
+
+/**
+ * Cards often get their depth from Tailwind shadow classes (shadcn cards use shadow-sm). These rules
+ * route those classes, and anything with bg-card, through the Depth and Softness sliders.
+ * Larger shadows (xl, 2xl) and hover shadows use the raised level, so overlays stay above cards.
+ */
+const shadowRules = (important: boolean, cfg = SANDBOX_CONFIG) => {
+  const card = cfg.tokens["shadowCard"], raised = cfg.tokens["shadowRaised"];
+  if (!card || !raised || !tailwindOn(cfg)) return "";
+  const imp = important ? " !important" : "";
+  return [
+    `.shadow-sm, .shadow, .shadow-md, .shadow-lg, .bg-card { box-shadow: var(${card})${imp}; }`,
+    `.shadow-xl, .shadow-2xl, .hover\\:shadow-md:hover, .hover\\:shadow-lg:hover, .hover\\:shadow-xl:hover { box-shadow: var(${raised})${imp}; }`,
+  ].join("\n");
+};
 
 const typeRules = (cfg = SANDBOX_CONFIG) => {
   const h = cfg.tokens.fontHeading, b = cfg.tokens.fontBody, t = cfg.tokens.headingTracking;
@@ -154,13 +185,14 @@ const typeRules = (cfg = SANDBOX_CONFIG) => {
 export function previewCss(l: Look, hideDecorations: boolean, cfg = SANDBOX_CONFIG) {
   const vars = tokenValues(l, cfg).map(([k, v]) => `  ${k}: ${v} !important;`).join("\n");
   const decor = hideDecorations && cfg.decorations ? `\n${cfg.decorations} { display: none !important; }` : "";
-  return `:root, :root.dark, .dark {\n${vars}\n}\n${typeRules(cfg)}\n${grainCss(l.grain)}${decor}`;
+  return `:root, :root.dark, .dark {\n${vars}\n}\n${typeRules(cfg)}\n${radiusRules(true, cfg)}\n${shadowRules(true, cfg)}${decor}`;
 }
 
 /** CSS the user pastes at the end of their global stylesheet. */
 export function exportCss(l: Look, cfg = SANDBOX_CONFIG) {
   const vars = tokenValues(l, cfg).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-  return `/* Style Sandbox: ${lookName(l)} */\n:root {\n${vars}\n}\n${typeRules(cfg)}${l.grain ? `\n${grainCss(true)}` : ""}`;
+  const rr = [radiusRules(false, cfg), shadowRules(false, cfg)].filter(Boolean).join("\n");
+  return `/* Style Sandbox: ${lookName(l)} */\n:root {\n${vars}\n}\n${typeRules(cfg)}${rr ? `\n${rr}` : ""}`;
 }
 
 /** JSON for Apply mode. */
@@ -179,12 +211,11 @@ export function lookJson(l: Look) {
     corners: { radius: l.radius >= RADIUS_FULL ? "full" : l.radius, ...radii(l.radius) },
     elevation: { depth: l.depth, softness: l.softness, card: sh.card, raised: sh.raised },
     density: SANDBOX_CONFIG.tokens.spacing ? { name: l.density, spacing: spacingValue(l.density) } : null,
-    paperGrain: l.grain,
   };
 }
 
 export const lookPrompt = (l: Look) =>
-  `Apply this Style Sandbox look. Update only design tokens, fonts, and the paper grain setting; do not change layout, copy, or components:\n\n${JSON.stringify(lookJson(l), null, 2)}`;
+  `Apply this Style Sandbox look. Update only design tokens and fonts; do not change layout, copy, or components:\n\n${JSON.stringify(lookJson(l), null, 2)}`;
 
 export function encodeLook(l: Look) {
   const json = JSON.stringify(l);
