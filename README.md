@@ -66,6 +66,8 @@ cp -r style-sandbox/style-sandbox ~/.codex/skills/
 
 To install for a single project instead of globally, copy the folder into that project's `.claude/skills/`, `.cursor/skills/`, or `.codex/skills/` directory.
 
+**No skills on your plan?** Use the paste-in prompt instead. It does the same install in one message.
+
 ## How it works
 
 1. **Preflight.** Reads your project and changes nothing.
