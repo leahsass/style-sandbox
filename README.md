@@ -64,9 +64,13 @@ mkdir -p ~/.codex/skills
 cp -r style-sandbox/style-sandbox ~/.codex/skills/
 ```
 
-To install for a single project instead of globally, copy the folder into that project's `.claude/skills/`, `.cursor/skills/`, or `.codex/skills/` directory.
+### Base44
+On a Builder plan or higher, go to **Build tools**, then **Skills**, choose **Add skill**, and upload the `style-sandbox` folder as a ZIP. Then ask Base44 to install Style Sandbox. When it's done, add `?style-sandbox` to your preview URL to open the panel.
 
-**No skills on your plan?** Use the paste-in prompt instead. It does the same install in one message.
+To install for a single project instead of globally, copy the folder into that project's `.claude/skills/`, `.cursor/skills/`, or `.codex/skills/` directory. In Base44, add it as a skill under **Build tools**, then **Skills**, instead.
+
+### No skills on your plan?
+Use the [paste-in prompt](PROMPT.md) instead. It does the same install in one message and works in builders without skills, like Base44 Starter. Tested in Base44.
 
 ## How it works
 
