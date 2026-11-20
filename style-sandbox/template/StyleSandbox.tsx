@@ -218,7 +218,7 @@ export function StyleSandbox() {
     return `${url.origin}${url.pathname}?${PARAM}#look=${encodeLook(look)}`;
   };
   const fontLinks = fontUrls(allFonts(look)).map((href) => `<link rel="stylesheet" href="${href}">`).join("\n");
-  const summary = `${themeName(look)}${look.gradient ? " (gradient)" : ""}${look.mode !== "auto" ? `, ${look.mode}` : ""} · ${look.fonts.heading} / ${look.fonts.body} · Corners ${radiusLabel(look.radius)} · ${DEPTH_LABELS[look.depth]}${look.depth ? (look.softness < 20 ? ", hard shadow" : look.softness > 70 ? ", soft shadow" : "") : ""}${CFG.tokens.spacing ? ` · ${look.density}` : ""}${look.grain ? " · grain" : ""}`;
+  const summary = `${themeName(look)}${look.gradient ? " (gradient)" : ""}${look.mode !== "auto" ? `, ${look.mode}` : ""} · ${look.fonts.heading} / ${look.fonts.body} · Corners ${radiusLabel(look.radius)} · ${DEPTH_LABELS[look.depth]}${look.depth ? (look.softness < 20 ? ", hard shadow" : look.softness > 70 ? ", soft shadow" : "") : ""}${CFG.tokens.spacing ? ` · ${look.density}` : ""}`;
 
   // A render function, not a component, so rows keep focus across re-renders.
   const themeRow = (id: string, name: string, desc: string, colors: KeyColors, gradientOk: boolean) => {
@@ -354,10 +354,11 @@ export function StyleSandbox() {
             </>)}
           </Section>
 
-          <Section title="Finish">
-            <label className="ss-switch">Paper grain<input type="checkbox" checked={look.grain} onChange={(e) => up({ grain: e.target.checked })} /></label>
-            {CFG.decorations && <label className="ss-switch">Hide decorations<input type="checkbox" checked={hide} onChange={(e) => setHide(e.target.checked)} /></label>}
-          </Section>
+          {CFG.decorations && (
+            <Section title="Preview">
+              <label className="ss-switch">Hide decorations<input type="checkbox" checked={hide} onChange={(e) => setHide(e.target.checked)} /></label>
+            </Section>
+          )}
 
           <Section title="Saved looks">
             <button className="ss-btn" onClick={save}>Save this look</button>
