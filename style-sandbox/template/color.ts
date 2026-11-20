@@ -91,29 +91,36 @@ export type Colors = KeyColors & {
 export function derive(k: KeyColors): Colors {
   const dark = luminance(k.background) < 0.2;
   const secondary = mix(k.background, k.foreground, dark ? 0.1 : 0.06);
+  // Gradient themes also paint a soft wash behind content, so text colors must pass on it too.
+  const surfaces = k.gradientEnd ? [k.background, washOf(k)] : [k.background];
   return {
     ...k,
     secondary,
     secondaryForeground: adjustUntil(k.foreground, [secondary], 4.5),
     muted: secondary,
-    mutedForeground: adjustUntil(mix(k.foreground, k.background, 0.4), [k.background, secondary], 4.5),
+    mutedForeground: adjustUntil(mix(k.foreground, k.background, 0.4), [...surfaces, secondary], 4.5),
     accentForeground: bestText(k.accent),
     border: adjustUntil(mix(k.background, k.foreground, 0.18), [k.background], 3),
-    link: adjustUntil(k.primary, [k.background], 4.5),
+    link: adjustUntil(k.primary, surfaces, 4.5),
     card: dark ? mix(k.background, k.foreground, 0.05) : k.background,
   };
 }
+
+/** The soft page wash gradient themes add behind content: the background tinted toward the gradient's end color. */
+export const washOf = (k: KeyColors) => (k.gradientEnd ? mix(k.background, k.gradientEnd, luminance(k.background) < 0.2 ? 0.16 : 0.12) : k.background);
 
 export type Check = { id: string; label: string; ratio: number; min: number; pass: boolean };
 
 export function checks(c: Colors, gradient: boolean): Check[] {
   const stops = gradient && c.gradientEnd ? [c.primary, c.gradientEnd] : [c.primary];
   const onPrimary = Math.min(...stops.map((s) => contrast(c.primaryForeground, s)));
+  const surfaces = gradient && c.gradientEnd ? [c.background, washOf(c)] : [c.background];
+  const onSurface = (fg: string) => Math.min(...surfaces.map((s) => contrast(fg, s)));
   const rows: [string, string, number, number][] = [
-    ["text", "Text on background", contrast(c.foreground, c.background), 4.5],
+    ["text", "Text on background", onSurface(c.foreground), 4.5],
     ["onPrimary", gradient ? "Text on gradient buttons" : "Text on primary buttons", onPrimary, 4.5],
-    ["muted", "Muted text", contrast(c.mutedForeground, c.background), 4.5],
-    ["link", "Links", contrast(c.link, c.background), 4.5],
+    ["muted", "Muted text", onSurface(c.mutedForeground), 4.5],
+    ["link", "Links", onSurface(c.link), 4.5],
     ["secondary", "Text on secondary", contrast(c.secondaryForeground, c.secondary), 4.5],
     ["border", "Borders", contrast(c.border, c.background), 3],
   ];

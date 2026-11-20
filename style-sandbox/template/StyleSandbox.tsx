@@ -12,7 +12,7 @@ import { SANDBOX_CONFIG as CFG } from "./config";
 import { ACCENT_FONTS, BODY_FONTS, FONT_PAIRS, HEADING_FONTS, byVibe, fontUrls, forVibe, loadFonts, pairsSampler } from "./fonts";
 import {
   DEPTH_LABELS, RADIUS_FULL, currentLook, decodeLook, effectiveColors, encodeLook, exportCss, fontStack, lookName,
-  lookPrompt, parseImport, previewCss, primaryFill, radii, radiusLabel, shadows, suggestGradientEnd, themeName,
+  lookPrompt, parseImport, previewCss, primaryFill, radii, radiusLabel, shadows, themeName,
   type Density, type Look,
 } from "./look";
 import { SANDBOX_CSS } from "./styles";
@@ -204,9 +204,8 @@ export function StyleSandbox() {
   };
   const unsave = (i: number) => { const next = saved.filter((_, j) => j !== i); setSaved(next); safe(() => localStorage.setItem(SAVED_KEY, JSON.stringify(next)), undefined); };
   const setColor = (key: keyof KeyColors, v: string) => {
-    const colors = { ...look.colors, [key]: v.toUpperCase() };
-    if (key === "primary") colors.gradientEnd = suggestGradientEnd(colors.primary);
-    setExtra({ ...look, themeId: "custom", colors }); up({ themeId: "custom", colors, mode: "auto" });
+    const colors = { ...look.colors, [key]: v.toUpperCase(), gradientEnd: undefined };
+    setExtra({ ...look, themeId: "custom", colors, gradient: false }); up({ themeId: "custom", colors, gradient: false, mode: "auto" });
   };
   const doImport = () => {
     const { look: imported, summary } = parseImport(importText, look);
@@ -221,26 +220,22 @@ export function StyleSandbox() {
   const summary = `${themeName(look)}${look.gradient ? " (gradient)" : ""}${look.mode !== "auto" ? `, ${look.mode}` : ""} · ${look.fonts.heading} / ${look.fonts.body} · Corners ${radiusLabel(look.radius)} · ${DEPTH_LABELS[look.depth]}${look.depth ? (look.softness < 20 ? ", hard shadow" : look.softness > 70 ? ", soft shadow" : "") : ""}${CFG.tokens.spacing ? ` · ${look.density}` : ""}`;
 
   // A render function, not a component, so rows keep focus across re-renders.
-  const themeRow = (id: string, name: string, desc: string, colors: KeyColors, gradientOk: boolean) => {
+  // Gradient themes always use their gradient; solid themes never do. There's no per-theme toggle.
+  const themeRow = (id: string, name: string, desc: string, colors: KeyColors, isGradient: boolean) => {
     const selected = look.themeId === id;
     const shown = selected ? k : colors;
-    const bad = checks(derive(shown), selected && look.gradient).some((x) => !x.pass);
-    const fill = selected && look.gradient && shown.gradientEnd ? `linear-gradient(135deg, ${shown.primary}, ${shown.gradientEnd})` : shown.primary;
-    const pick = () => { if (!selected) up({ themeId: id, colors, gradient: false }); };
+    const bad = checks(derive(shown), isGradient).some((x) => !x.pass);
+    const fill = isGradient && shown.gradientEnd ? `linear-gradient(135deg, ${shown.primary}, ${shown.gradientEnd})` : shown.primary;
+    const pick = () => { if (!selected) up({ themeId: id, colors, gradient: isGradient }); };
     return (
       <div key={id} role="button" tabIndex={0} aria-pressed={selected} className="ss-theme" onClick={pick}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } }}
         aria-label={`${name}${bad ? ", has contrast issues" : ""}`}>
         <div className="ss-theme-top">
           <span className="ss-strip" aria-hidden>{[shown.background, fill, shown.accent, shown.foreground].map((c, i) => <i key={i} style={{ background: c }} />)}</span>
-          <span><span className="ss-theme-name">{name}</span>{gradientOk && <span className="ss-theme-desc"> · gradient ready</span>}<span className="ss-theme-desc" style={{ display: "block" }}>{desc}</span></span>
+          <span><span className="ss-theme-name">{name}</span>{isGradient && <span className="ss-badge">Gradient</span>}<span className="ss-theme-desc" style={{ display: "block" }}>{desc}</span></span>
           {bad && <span className="ss-warn" title="Contrast issues" />}
         </div>
-        {selected && gradientOk && (
-          <div className="ss-seg" role="group" aria-label="Key color" onClick={(e) => e.stopPropagation()}>
-            {(["Solid", "Gradient"] as const).map((m) => <button key={m} aria-pressed={look.gradient === (m === "Gradient")} onClick={() => up({ gradient: m === "Gradient" })}>{m}</button>)}
-          </div>
-        )}
       </div>
     );
   };
@@ -282,7 +277,7 @@ export function StyleSandbox() {
             <div style={{ marginTop: 8 }}>
               {themeRow("current", "Current", "Your app as it is today.", CFG.current.colors, false)}
               {CFG.extraThemes.map((t) => themeRow(t.id, t.name, t.description, themeKeys(t), !!t.gradientEnd))}
-              {extra && themeRow(extra.themeId, extra.themeId === "imported" ? "Imported" : "Custom", "Your own colors.", extra.colors, !!extra.colors.gradientEnd)}
+              {extra && themeRow(extra.themeId, extra.themeId === "imported" ? "Imported" : "Custom", "Your own colors.", extra.colors, false)}
               {themes.map((t) => themeRow(t.id, t.name, t.description, themeKeys(t), !!t.gradientEnd))}
             </div>
             <p className="ss-sublabel">Mode</p>

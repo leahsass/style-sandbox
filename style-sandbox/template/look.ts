@@ -1,7 +1,7 @@
 // Style Sandbox looks: the user's current pick, how it turns into CSS, sharing, export, and import.
 // Do not edit per project.
 
-import { bestText, derive, fromHsl, hexToHslTriplet, toHsl, toMode, type Colors, type KeyColors } from "./color";
+import { bestText, derive, hexToHslTriplet, toHsl, toMode, washOf, type Colors, type KeyColors } from "./color";
 import { SANDBOX_CONFIG, type TokenFormat } from "./config";
 import { THEMES } from "./themes";
 
@@ -83,12 +83,6 @@ export function shadows(depth: number, softness: number, colors: KeyColors) {
 
 export const primaryFill = (l: Look, c: KeyColors = effectiveColors(l)) =>
   l.gradient && c.gradientEnd ? `linear-gradient(135deg, ${c.primary}, ${c.gradientEnd})` : c.primary;
-
-/** Suggest a gradient end for a custom key color: a 30 degree hue shift, slightly deeper. */
-export function suggestGradientEnd(primary: string) {
-  const [h, s, l] = toHsl(primary);
-  return fromHsl((h + 30 / 360) % 1, s, Math.max(0, l - 0.05));
-}
 
 export const fontStack = (name: string, fallback: "serif" | "sans-serif" = "sans-serif") => `"${name}", system-ui, ${fallback}`;
 
@@ -173,6 +167,18 @@ const shadowRules = (important: boolean, cfg = SANDBOX_CONFIG) => {
   ].join("\n");
 };
 
+/**
+ * Gradient themes put their signature gradient on primary buttons and a soft wash on the page.
+ * Many apps paint buttons with Tailwind's flat bg-primary, so the gradient is laid over that too.
+ */
+const gradientRules = (l: Look, important: boolean, cfg = SANDBOX_CONFIG) => {
+  const k = effectiveColors(l);
+  if (!l.gradient || !k.gradientEnd) return "";
+  const imp = important ? " !important" : "";
+  const wash = `body { background-image: linear-gradient(160deg, ${k.background} 0%, ${washOf(k)} 100%)${imp}; background-attachment: fixed${imp}; }`;
+  return [wash, tailwindOn(cfg) ? `.bg-primary { background-image: ${primaryFill(l, k)}${imp}; }` : ""].filter(Boolean).join("\n");
+};
+
 const typeRules = (cfg = SANDBOX_CONFIG) => {
   const h = cfg.tokens.fontHeading, b = cfg.tokens.fontBody, t = cfg.tokens.headingTracking;
   return [
@@ -185,13 +191,13 @@ const typeRules = (cfg = SANDBOX_CONFIG) => {
 export function previewCss(l: Look, hideDecorations: boolean, cfg = SANDBOX_CONFIG) {
   const vars = tokenValues(l, cfg).map(([k, v]) => `  ${k}: ${v} !important;`).join("\n");
   const decor = hideDecorations && cfg.decorations ? `\n${cfg.decorations} { display: none !important; }` : "";
-  return `:root, :root.dark, .dark {\n${vars}\n}\n${typeRules(cfg)}\n${radiusRules(true, cfg)}\n${shadowRules(true, cfg)}${decor}`;
+  return `:root, :root.dark, .dark {\n${vars}\n}\n${typeRules(cfg)}\n${radiusRules(true, cfg)}\n${shadowRules(true, cfg)}\n${gradientRules(l, true, cfg)}${decor}`;
 }
 
 /** CSS the user pastes at the end of their global stylesheet. */
 export function exportCss(l: Look, cfg = SANDBOX_CONFIG) {
   const vars = tokenValues(l, cfg).map(([k, v]) => `  ${k}: ${v};`).join("\n");
-  const rr = [radiusRules(false, cfg), shadowRules(false, cfg)].filter(Boolean).join("\n");
+  const rr = [radiusRules(false, cfg), shadowRules(false, cfg), gradientRules(l, false, cfg)].filter(Boolean).join("\n");
   return `/* Style Sandbox: ${lookName(l)} */\n:root {\n${vars}\n}\n${typeRules(cfg)}${rr ? `\n${rr}` : ""}`;
 }
 
@@ -269,7 +275,6 @@ export function parseImport(text: string, base: Look): { look: Look; summary: st
     primary,
     primaryForeground: color("--primary-foreground") ?? bestText(primary),
     accent: pick(color("--accent"), "accent", base.colors.accent),
-    gradientEnd: suggestGradientEnd(primary),
   };
   const heading = font("--font-heading", "--font-display", "--font-serif");
   const body = font("--font-body", "--font-sans");

@@ -39,6 +39,7 @@ export const SANDBOX_CSS = `
 .ss-strip { display: flex; border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,0,0,.12); flex-shrink: 0; }
 .ss-strip i { width: 14px; height: 22px; }
 .ss-theme-name { font-weight: 700; }
+.ss-badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #6D3FD8, #E8467C); vertical-align: 1px; }
 .ss-theme-desc { color: #6B655C; font-size: 11.5px; }
 .ss-warn { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: #B91C1C; flex-shrink: 0; }
 .ss-seg { display: inline-flex; border: 1px solid #D6D2C9; border-radius: 8px; overflow: hidden; }
